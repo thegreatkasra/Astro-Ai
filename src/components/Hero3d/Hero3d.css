@@ -1,0 +1,9 @@
+.home-hero--3d {
+    background: black; 
+    width: 100%;
+  }
+.home-hero--3d canvas{
+  width: 100%;
+}
+
+  
