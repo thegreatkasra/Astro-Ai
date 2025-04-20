@@ -6,15 +6,11 @@
     background: #00000047;
     position: absolute;
     padding: 30px 70px;
-    /* Add these to prevent layout shift during animation */
-    overflow: hidden;
-    min-height: 80px; /* Adjust based on your header height */
+    min-height: 80px;
 }
 
 .header--logo{
     cursor: pointer;
-    opacity: 0; /* Initial state for animation */
-    transform: translateX(-20px); /* Initial state for animation */
 }
 
 .header--navbar ul{
@@ -23,18 +19,20 @@
     align-items: center;
     gap: 12px;
 }
-
+.header--navbar{
+    opacity: 0;
+    transform: translateY(-10px);
+}
 .header--navbar ul li{
     cursor: pointer;
     transition: 0.4s ease;
     padding: 8px 32px;
-    opacity: 0; /* Initial state for animation */
-    transform: translateY(-10px); /* Initial state for animation */
 }
 
 .header--navbar ul li:hover{
     background: var(--primary-color);
     border-radius: 15px;
+   
 }
 
 .header--signin button{
@@ -46,9 +44,8 @@
     border-radius: 15px;
     border: 1px solid var(--white-color);
     transition: 0.5s;
-    font-size: 18px;
-    opacity: 0; /* Initial state for animation */
-    transform: translateX(20px); /* Initial state for animation */
+    opacity: 0; 
+    transform: translateX(30); 
 }
 
 .header--signin button:hover{

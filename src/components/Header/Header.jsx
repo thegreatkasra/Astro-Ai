@@ -7,14 +7,9 @@ const Header = () => {
   const logoRef = useRef(null);
   const navRef = useRef(null);
   const buttonRef = useRef(null);
-  const listItemsRef = useRef([]);
 
-  // Add items to the listItemsRef array
-  const addToRefs = (el) => {
-    if (el && !listItemsRef.current.includes(el)) {
-      listItemsRef.current.push(el);
-    }
-  };
+
+
 
   useEffect(() => {
     // Create a GSAP context for easier cleanup
@@ -27,22 +22,22 @@ const Header = () => {
         ease: "expo.out",
         delay: 0.2
       });
-
-      // Nav items animation - stagger fade in with upward motion
-      gsap.from(listItemsRef.current, {
-        y: -30,
-        opacity: 0,
+      
+  
+      gsap.to(navRef.current, {
+        y: 0,
+        opacity: 1,
         duration: 0.8,
-        stagger: 0.15,
+        stagger: 1,
         ease: "back.out(1.2)",
         delay: 0.4
       });
 
       // Button animation - fade in from right
-      gsap.from(buttonRef.current, {
-        x: 100,
-        opacity: 0,
-        duration: 1,
+      gsap.to(buttonRef.current, {
+        x: 0,
+        opacity: 1,
+        duration: 0.7,
         ease: "expo.out",
         delay: 0.6
       });
@@ -57,12 +52,12 @@ const Header = () => {
         <img src={logo} alt="logo" />
       </div>
 
-      <nav className="header--navbar" ref={navRef}>
-        <ul>
-          <li ref={addToRefs}>Home</li>
-          <li ref={addToRefs}>About us</li>
-          <li ref={addToRefs}>Pricing</li>
-          <li ref={addToRefs}>Community</li>
+      <nav className="header--navbar" ref={navRef} >
+        <ul >
+          <li >Home</li>
+          <li >About us</li>
+          <li >Pricing</li>
+          <li >Community</li>
         </ul>
       </nav>
 
