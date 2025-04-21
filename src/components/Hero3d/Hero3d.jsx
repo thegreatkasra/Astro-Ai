@@ -5,6 +5,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 import './Hero3d.css';
+import Header from './../../components/Header/Header';
 
 const Hero3d = () => {
     const canvasRef = useRef(null);
@@ -292,6 +293,7 @@ const Hero3d = () => {
 
     return (
         <div className="home-hero--3d">
+            <Header />
             <canvas ref={canvasRef} />
         </div>
     );
