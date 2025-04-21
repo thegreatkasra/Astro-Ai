@@ -13,7 +13,7 @@ const Home = () => {
       </div>
 
       <div className="home--summery">
-      
+        
       </div>
       
     </>
