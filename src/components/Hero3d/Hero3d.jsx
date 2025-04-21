@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import './Hero3d.css';
 
 const Hero3d = () => {
@@ -12,50 +13,51 @@ const Hero3d = () => {
     const modelRef = useRef(null);
     const particlesRef = useRef(null);
     const sunRef = useRef(null);
-    const earthRef = useRef(null); // Added reference for earth
+    const earthRef = useRef(null);
+    const stoneRef = useRef(null);
+    const stoneVelocityRef = useRef(new THREE.Vector3());
+    const sceneRef = useRef(null);
+    const clock = new THREE.Clock();
 
     useEffect(() => {
-        // Scene setup
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x000814, 0.001);
-        
-        // Camera
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 15;
+        sceneRef.current = scene;
 
-        // Renderer
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 20;
+
         const renderer = new THREE.WebGLRenderer({
             canvas: canvasRef.current,
             antialias: true,
-            alpha: true
+            alpha: true,
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
 
-        // Post-processing
         const composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
         const bloomPass = new UnrealBloomPass(
             new THREE.Vector2(window.innerWidth, window.innerHeight),
-            2.0, 0.6, 0.8
+            2.0,
+            0.6,
+            0.8
         );
         composer.addPass(bloomPass);
 
-        // Create Milky Way particles
         const createParticles = () => {
             const particles = new THREE.BufferGeometry();
             const positions = new Float32Array(5000 * 3);
             const colors = new Float32Array(5000 * 3);
-
             for (let i = 0; i < 5000; i++) {
                 const radius = 50 + Math.random() * 50;
                 const theta = Math.random() * Math.PI * 2;
                 const phi = Math.acos(2 * Math.random() - 1);
-
                 positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
                 positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
                 positions[i * 3 + 2] = radius * Math.cos(phi) * -5;
-
                 const color = new THREE.Color(
                     Math.random() * 0.2 + 0.1,
                     Math.random() * 0.3 + 0.2,
@@ -65,7 +67,6 @@ const Hero3d = () => {
                 colors[i * 3 + 1] = color.g;
                 colors[i * 3 + 2] = color.b;
             }
-
             particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
@@ -74,7 +75,7 @@ const Hero3d = () => {
                 vertexColors: true,
                 transparent: true,
                 opacity: 0.8,
-                blending: THREE.AdditiveBlending
+                blending: THREE.AdditiveBlending,
             });
 
             const particleSystem = new THREE.Points(particles, particleMaterial);
@@ -82,32 +83,22 @@ const Hero3d = () => {
             particlesRef.current = particleSystem;
         };
 
-        // Create mars
         const createMars = () => {
-            const marsGeometry = new THREE.SphereGeometry(10, 32, 32);
-            
-            const marsTexture = new THREE.TextureLoader().load(
-                '/textures/mars.jpg',
-                (texture) => {
-                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-                    texture.repeat.set(1, 1);
-                }
-            );
-        
+            const marsGeometry = new THREE.SphereGeometry(5, 32, 32);
+            const marsTexture = new THREE.TextureLoader().load('/textures/mars.jpg');
             const marsMaterial = new THREE.MeshStandardMaterial({
                 map: marsTexture,
                 roughness: 0.4,
-                metalness: 0.1
+                metalness: 0.1,
+                envMapIntensity: 1.0,
             });
-        
-            const earthMesh = new THREE.Mesh(marsGeometry, marsMaterial);
-            earthMesh.position.set(-40, -10, -50);
-            scene.add(earthMesh);
-            
-            return earthMesh;
+
+            const marsMesh = new THREE.Mesh(marsGeometry, marsMaterial);
+            marsMesh.position.set(-40, -10, -50);
+            scene.add(marsMesh);
+            return marsMesh;
         };
 
-        // Create Sun
         const createSun = () => {
             const sunGeometry = new THREE.SphereGeometry(4, 64, 64);
             const sunMaterial = new THREE.MeshStandardMaterial({
@@ -115,7 +106,7 @@ const Hero3d = () => {
                 emissive: 0xffcc66,
                 emissiveIntensity: 1.5,
                 roughness: 2,
-                metalness: 0.2
+                metalness: 0.2,
             });
 
             const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
@@ -124,38 +115,43 @@ const Hero3d = () => {
 
             const coronaGeometry = new THREE.SphereGeometry(6, 64, 64);
             const coronaMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffdd99,
                 transparent: true,
                 opacity: 0.8,
-                blending: THREE.AdditiveBlending
+                blending: THREE.AdditiveBlending,
             });
+
             const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
             corona.position.copy(sunMesh.position);
             scene.add(corona);
 
-            const sunLight = new THREE.PointLight(0xff1111, 5, 100, 2);
+            const sunLight = new THREE.PointLight(0xff9933, 5, 100, 2);
             sunLight.position.copy(sunMesh.position);
             scene.add(sunLight);
 
             const directionalLight = new THREE.DirectionalLight(0xffeedd, 1);
             directionalLight.position.copy(sunMesh.position);
-            directionalLight.castShadow = true;
             scene.add(directionalLight);
 
             sunRef.current = {
                 mesh: sunMesh,
                 corona: corona,
                 light: sunLight,
-                directionalLight: directionalLight
+                directionalLight: directionalLight,
             };
         };
 
-        // Load UFO model
         const loadModel = () => {
             new GLTFLoader().load(
                 '/models/ufo.glb',
                 (gltf) => {
                     const model = gltf.scene;
                     model.scale.setScalar(2);
+                    model.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            child.material.envMapIntensity = 1.0;
+                        }
+                    });
                     scene.add(model);
                     modelRef.current = model;
                 },
@@ -164,49 +160,69 @@ const Hero3d = () => {
             );
         };
 
-        // Setup lights
+        const loadModelStone = () => {
+            new GLTFLoader().load(
+                '/models/stone.glb',
+                (gltf) => {
+                    const stoneModel = gltf.scene;
+                    stoneModel.scale.setScalar(2);
+                    stoneModel.position.set(0, 0, -20);
+                    stoneModel.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            child.material.envMapIntensity = 1.0;
+                        }
+                    });
+                    scene.add(stoneModel);
+                    stoneRef.current = stoneModel;
+                },
+                undefined,
+                (error) => console.error('Error loading stone model:', error)
+            );
+        };
+
         const setupLights = () => {
             scene.add(new THREE.AmbientLight(0x404040, 4));
             const pointLight = new THREE.PointLight(0x87CEEB, 100, 1000);
-            pointLight.position.set(
-                camera.position.x + 5,  
-                camera.position.y + 5,  
-                camera.position.z - 5   
-            );
+            pointLight.position.set(camera.position.x + 5, camera.position.y + 5, camera.position.z - 5);
             scene.add(pointLight);
         };
 
-        // Initialize all components
+        const changeStoneDirection = () => {
+            const randomVector = new THREE.Vector3(
+                (Math.random() - 0.5) * 0.1,
+                (Math.random() - 0.5) * 0.1,
+                (Math.random() - 0.5) * 0.1
+            );
+            stoneVelocityRef.current.lerp(randomVector, 0.1);
+        };
+
+        setInterval(changeStoneDirection, 2000);
+
         createParticles();
         createSun();
         loadModel();
+        loadModelStone();
         setupLights();
-        earthRef.current = createMars(); // Store earth reference
+        earthRef.current = createMars();
 
-        // Mouse movement tracking
         const handleMouseMove = (e) => {
             mousePosition.current = {
                 x: (e.clientX / window.innerWidth) * 2 - 1,
-                y: -(e.clientY / window.innerHeight) * 2 + 1
+                y: -(e.clientY / window.innerHeight) * 2 + 1,
+                movementX: e.movementX || 0,
+                movementY: e.movementY || 0,
             };
         };
+
         window.addEventListener('mousemove', handleMouseMove);
 
-        // Animation loop
         const animate = () => {
             requestAnimationFrame(animate);
+            const delta = clock.getDelta();
 
-            // Rotate Earth
-            if (earthRef.current) {
-                earthRef.current.rotation.y += 0.003;
-            }
+            if (earthRef.current) earthRef.current.rotation.y += 0.003;
+            if (particlesRef.current) particlesRef.current.rotation.y += 0.0002;
 
-            // Rotate particles
-            if (particlesRef.current) {
-                particlesRef.current.rotation.y += 0.0002;
-            }
-
-            // Animate sun
             if (sunRef.current) {
                 const time = Date.now() * 0.001;
                 const pulseFactor = Math.sin(time * 0.5) * 0.1 + 1;
@@ -215,27 +231,30 @@ const Hero3d = () => {
                 sunRef.current.light.intensity = 5 + Math.sin(time) * 2;
             }
 
-            // UFO follows cursor
             if (modelRef.current) {
                 modelRef.current.position.x += (mousePosition.current.x * 5 - modelRef.current.position.x) * 0.05;
                 modelRef.current.position.y += (mousePosition.current.y * 3 - modelRef.current.position.y) * 0.05;
                 modelRef.current.rotation.y += 0.01;
             }
 
+            if (stoneRef.current) {
+                stoneRef.current.position.add(stoneVelocityRef.current.clone().multiplyScalar(delta * 60));
+            }
+
             composer.render();
         };
+
         animate();
 
-        // Handle window resize
         const handleResize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
             composer.setSize(window.innerWidth, window.innerHeight);
         };
+
         window.addEventListener('resize', handleResize);
 
-        // Cleanup
         return () => {
             window.removeEventListener('resize', handleResize);
             window.removeEventListener('mousemove', handleMouseMove);
@@ -244,7 +263,7 @@ const Hero3d = () => {
     }, []);
 
     return (
-        <div className='home-hero--3d'>
+        <div className="home-hero--3d">
             <canvas ref={canvasRef} />
         </div>
     );

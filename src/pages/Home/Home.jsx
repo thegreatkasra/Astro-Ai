@@ -5,7 +5,7 @@ import Header from './../../components/Header/Header'
 
 const Home = () => {
   return (
-    <div className='home'>
+    <div className='home--hero'>
         <Header />
         <Hero3d />
     </div>
