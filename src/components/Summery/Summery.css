@@ -1,0 +1,6 @@
+.home--summery{
+    background: var(--black-color);
+}
+.home--summery p{
+    color: var(--black-color);
+}

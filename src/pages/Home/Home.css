@@ -1,5 +1,23 @@
-.home--hero{
-    width: 100%;
+
+/* Horizontal scroll setup */
+.horizontal-container {
+    width: 100vw;
     height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+  
+  .horizontal-wrapper {
+    display: flex;
+    position: relative;
+    height: 100%;
+  }
+  
+  .home--hero, .home--summery {
+    width: 100vw;
+    height: 100vh;
+    flex-shrink: 0;
     overflow: hidden;
-}
+  }
