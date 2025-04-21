@@ -4,7 +4,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 import './Hero3d.css';
 
 const Hero3d = () => {
@@ -15,6 +14,7 @@ const Hero3d = () => {
     const sunRef = useRef(null);
     const earthRef = useRef(null);
     const stoneRef = useRef(null);
+    const spaceshipRef = useRef(null);
     const stoneVelocityRef = useRef(new THREE.Vector3());
     const sceneRef = useRef(null);
     const clock = new THREE.Clock();
@@ -146,7 +146,7 @@ const Hero3d = () => {
                 '/models/ufo.glb',
                 (gltf) => {
                     const model = gltf.scene;
-                    model.scale.setScalar(2);
+                    model.scale.setScalar(10);
                     model.traverse((child) => {
                         if (child.isMesh && child.material) {
                             child.material.envMapIntensity = 1.0;
@@ -180,6 +180,22 @@ const Hero3d = () => {
             );
         };
 
+        const loadModelSpaceship = () => {
+            new GLTFLoader().load(
+                '/models/spaceship.glb',
+                (gltf) => {
+                    const spaceshipModel = gltf.scene;
+                    spaceshipModel.scale.setScalar(0.04);
+                    spaceshipModel.position.set(-40, 10, -50);
+                    spaceshipModel.rotateY(45);
+                    scene.add(spaceshipModel);
+                    spaceshipRef.current = spaceshipModel;
+                },
+                undefined,
+                (error) => console.error('Error loading spaceship model:', error)
+            );
+        };
+
         const setupLights = () => {
             scene.add(new THREE.AmbientLight(0x404040, 4));
             const pointLight = new THREE.PointLight(0x87CEEB, 100, 1000);
@@ -202,6 +218,7 @@ const Hero3d = () => {
         createSun();
         loadModel();
         loadModelStone();
+        loadModelSpaceship();
         setupLights();
         earthRef.current = createMars();
 
@@ -232,13 +249,24 @@ const Hero3d = () => {
             }
 
             if (modelRef.current) {
-                modelRef.current.position.x += (mousePosition.current.x * 5 - modelRef.current.position.x) * 0.05;
-                modelRef.current.position.y += (mousePosition.current.y * 3 - modelRef.current.position.y) * 0.05;
-                modelRef.current.rotation.y += 0.01;
+                modelRef.current.position.x += (mousePosition.current.x * 10 - modelRef.current.position.x) * 0.05;
+                modelRef.current.position.y += (mousePosition.current.y * 6 - modelRef.current.position.y) * 0.05;
+                modelRef.current.rotation.y += 0.001;
             }
 
             if (stoneRef.current) {
                 stoneRef.current.position.add(stoneVelocityRef.current.clone().multiplyScalar(delta * 60));
+                modelRef.current.rotation.y += 0.001;
+            }
+
+            if (spaceshipRef.current) {
+                const targetPosition = new THREE.Vector3(40, -10, 50);
+                const currentPosition = spaceshipRef.current.position;
+                // Move at 2 units per second (adjust this value to change speed)
+                const speed = 0.01; // units per second
+                const step = speed * delta;
+                currentPosition.lerp(targetPosition, Math.min(step, 0.1)); // Cap at 0.1 per frame
+                spaceshipRef.current.rotation.y += 0.005 * delta * 60; // Adjust rotation speed too
             }
 
             composer.render();

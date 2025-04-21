@@ -5,10 +5,18 @@ import Header from './../../components/Header/Header'
 
 const Home = () => {
   return (
-    <div className='home--hero'>
+    <>
+
+      <div id='hero' className='home--hero'>
         <Header />
         <Hero3d />
-    </div>
+      </div>
+
+      <div className="home--summery">
+      
+      </div>
+      
+    </>
   )
 }
 
