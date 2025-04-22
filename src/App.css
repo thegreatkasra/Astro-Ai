@@ -9,11 +9,23 @@
     color: var(--white-color);
     overflow-x: hidden;
 }
+h1{
+    font-size: 32px;
+    font-size: 600;
+}
+p{
+    font-size: 16px;
+}
+h2{
+    font-size: 20px;
+    font-size: 600;
+}
 :root {
-    --black-color: #051014;
+    --black-color: #010101;
+    --blue-black-color: #050614;
     --white-color: #FFFEFF;
     --primary-color: #265CD8;
-    --accent-color: #D8CC34;
+    --accent-color: #FF6923;
     --light-gray-color: #848484;
     --dark-gray-color: #2E2F2F;
   }

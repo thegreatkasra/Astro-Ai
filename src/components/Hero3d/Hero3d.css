@@ -1,8 +1,40 @@
 .home-hero--3d {
     width: 100%;
+    background: var(--black-color);
   }
 .home-hero--3d canvas{
   width: 100%;
 }
-
-  
+.home--playnow{
+  position: absolute;
+  z-index: 2000;
+  bottom: 10vh;
+  left: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  max-width: 430px;
+}
+.home--playnow h1 span{
+  font-size: 32px;
+  color: var(--accent-color);
+}
+.home--playnow button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary-color);
+  width: 100%;
+  border-radius: 5px;
+  padding: 10px;
+  opacity: 0.4;
+  transition: 0.7s ease;
+}
+.home--playnow button span{
+  font-size: 20px;
+}
+.home--playnow button:hover{
+  opacity: 1;
+}

@@ -56,7 +56,7 @@ const Header = () => {
         <ul >
           <li >Home</li>
           <li >About us</li>
-          <li >Pricing</li>
+          <li >NFT</li>
           <li >Community</li>
         </ul>
       </nav>

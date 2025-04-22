@@ -1,6 +1,87 @@
 .home--summery{
-    background: var(--black-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.home--summery p{
-    color: var(--black-color);
+.home--summery-bg{
+    position: absolute;
+    top: 0;
+    right: 0;
+    max-height: 600px;
+}
+/* Explore NFT */
+.home--summery-NFT{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    margin-top: 110px;
+    max-height: 50vh;
+}
+.home--summery-NFT-left{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+}
+.home--summery-NFT-left button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 48px;
+    border-radius: 5px;
+    background: var(--accent-color);
+    color: var(--blue-black-color);
+    transition: 0.5s ease;
+    font-size: 16px;
+    font-weight: 600;
+}
+.home--summery-NFT-left button:hover{
+    background-color: #cb521bc9;
+    color: var(--white-color);
+}
+.home--summery-NFT-right{
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.home--summery-NFT-right img{
+    max-width: 230px;
+}
+
+/* video container */
+.home--summery-video-all{
+    margin-top: 42px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 90%;
+}
+.videos{
+    display: flex;
+    gap: 42px;
+    margin-top: 42px;
+    
+}
+.video1 video{
+    border-radius: 15px;
+    max-height: 222px;
+    
+}
+.video2 video{
+    max-height: 349px;
+    border-radius: 15px;
+}
+.video3{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.video3 video{
+    max-height: 196px;
+    border-radius: 15px;
 }

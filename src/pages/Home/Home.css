@@ -1,22 +1,30 @@
-
 .horizontal-container {
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-    top: 0;
-    left: 0;
-  }
-  
-  .horizontal-wrapper {
-    display: flex;
-    position: relative;
-    height: 100%;
-  }
-  
-  .home--hero, .home--summery {
-    width: 100vw;
-    height: 100vh;
-    flex-shrink: 0;
-    overflow: hidden;
-  }
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+.horizontal-wrapper {
+  display: flex; /* Arrange hero and summary side by side */
+  width: 200vw; /* Total width to accommodate both containers */
+  height: 100vh;
+  position: relative;
+}
+
+.home--hero {
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  background: var(--black-color); /* Optional: Add background for visibility */
+}
+
+.home--summery {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  background: var(--black-color); /* Optional: Add background to debug visibility */
+}

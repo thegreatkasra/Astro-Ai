@@ -5,7 +5,8 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 import './Hero3d.css';
-import Header from './../../components/Header/Header';
+
+import controller from './img/controller.png'
 
 const Hero3d = () => {
     const canvasRef = useRef(null);
@@ -187,7 +188,7 @@ const Hero3d = () => {
                 (gltf) => {
                     const spaceshipModel = gltf.scene;
                     spaceshipModel.scale.setScalar(0.04);
-                    spaceshipModel.position.set(-40, 10, -50);
+                    spaceshipModel.position.set(10, -5, 10);
                     spaceshipModel.rotateY(45);
                     scene.add(spaceshipModel);
                     spaceshipRef.current = spaceshipModel;
@@ -261,12 +262,6 @@ const Hero3d = () => {
             }
 
             if (spaceshipRef.current) {
-                const targetPosition = new THREE.Vector3(40, -10, 50);
-                const currentPosition = spaceshipRef.current.position;
-                // Move at 2 units per second (adjust this value to change speed)
-                const speed = 0.01; // units per second
-                const step = speed * delta;
-                currentPosition.lerp(targetPosition, Math.min(step, 0.1)); // Cap at 0.1 per frame
                 spaceshipRef.current.rotation.y += 0.005 * delta * 60; // Adjust rotation speed too
             }
 
@@ -293,8 +288,13 @@ const Hero3d = () => {
 
     return (
         <div className="home-hero--3d">
-            <Header />
+            
             <canvas ref={canvasRef} />
+            <div className="home--playnow">
+                <h1>Explore the ASTRO Galaxy of <span>NFT</span> Gaming</h1>
+                <p>ASTRO isn’t just a game—it’s a sci-fi universe where you can own, trade, and battle unique NFTs. Play to earn ASTRO tokens, conquer galaxies, and join a thriving community of space explorers.</p>
+                <button><img src={controller} alt="play" /><span>PLAY NOW</span></button>
+            </div>
         </div>
     );
 };
